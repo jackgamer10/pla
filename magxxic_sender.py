@@ -129,22 +129,45 @@ def generate_tracked_link(base_url, recipient):
 
 # --- Core Functions ---
 
-def check_twilio_api():
+def check_twilio_api(proxy=None):
     try:
         if not all([TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN]):
             return "Twilio credentials not configured."
-        twilio_client.api.accounts(TWILIO_ACCOUNT_SID).fetch()
-        return "Twilio API is working."
+
+        client = twilio_client
+        if proxy:
+            from twilio.http.http_client import TwilioHttpClient
+            http_client = TwilioHttpClient(proxy={'http': proxy, 'https': proxy})
+            client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, http_client=http_client)
+
+        client.api.accounts(TWILIO_ACCOUNT_SID).fetch()
+        return f"Twilio API is working.{' (via proxy)' if proxy else ''}"
     except Exception as e:
         return f"Twilio API check failed: {e}"
 
-def check_vonage_api():
+def check_vonage_api(proxy=None):
     try:
         if not all([VONAGE_API_KEY, VONAGE_API_SECRET]):
             return "Vonage credentials not configured."
-        vonage_client.account.get_balance()
-        return "Vonage API is working."
+
+        client = vonage_client
+        if proxy:
+            from vonage import Client
+            client = Client(key=VONAGE_API_KEY, secret=VONAGE_API_SECRET)
+            os.environ['HTTP_PROXY'] = proxy
+            os.environ['HTTPS_PROXY'] = proxy
+
+        client.account.get_balance()
+
+        if proxy:
+            os.environ.pop('HTTP_PROXY', None)
+            os.environ.pop('HTTPS_PROXY', None)
+
+        return f"Vonage API is working.{' (via proxy)' if proxy else ''}"
     except Exception as e:
+        if proxy:
+            os.environ.pop('HTTP_PROXY', None)
+            os.environ.pop('HTTPS_PROXY', None)
         return f"Vonage API check failed: {e}"
 
 def send_sms_twilio(phone_number, message, proxy=None):
@@ -460,7 +483,7 @@ def main():
         '3': lambda: send_sms_to_multiple(send_sms_plivo),
         '4': lambda: send_sms_to_multiple(send_sms_messagebird),
         '7': lambda: send_sms_to_multiple(send_sms_textbelt),
-        '8': lambda: print(check_vonage_api()),
+        '8': lambda: print(check_vonage_api(proxy_manager.get_next_proxy_url() if proxy_manager.enabled else None)),
         '9': lambda: send_sms_to_multiple(send_sms_telnyx),
         '10': lambda: send_sms_to_multiple(send_sms_telesign),
         '11': lambda: send_sms_to_multiple(send_sms_aws_sns),
@@ -468,7 +491,7 @@ def main():
         '13': lambda: check_phone_number_stub(get_phone_number_input()),
         '14': lambda: filter_carrier_stub(get_phone_number_input()),
         '15': lambda: check_and_filter_carrier_stub(get_phone_number_input()),
-        '16': lambda: print(check_twilio_api()),
+        '16': lambda: print(check_twilio_api(proxy_manager.get_next_proxy_url() if proxy_manager.enabled else None)),
         '17': configure_proxy,
         '18': configure_tracking,
         '19': lambda: print(f"Your IP: {get_current_ip(proxy_manager.get_next_proxy_url() if proxy_manager.enabled else None)}"),
