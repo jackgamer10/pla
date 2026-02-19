@@ -35,12 +35,20 @@ This project is a command-line interface (CLI) application that allows you to se
     cd multi-provider-sms-sender
     ```
 
-2.  **Install dependencies:**
+3.  **Install dependencies:**
+
+    **On Windows:**
+    Simply run the setup batch file:
+    ```cmd
+    setup.bat
+    ```
+
+    **On Linux/macOS:**
     ```bash
     pip install -r requirements.txt
     ```
 
-3.  **Set environment variables:**
+4.  **Set environment variables:**
     Create a `.env` file in the root of the project and add the API credentials for the services you intend to use.
 
     ```
@@ -54,6 +62,13 @@ This project is a command-line interface (CLI) application that allows you to se
 ## Usage
 
 Run the application from your terminal:
+
+**On Windows:**
+```cmd
+run.bat
+```
+
+**On Linux/macOS:**
 ```bash
 python app.py
 ```
