@@ -25,6 +25,10 @@ This project is a command-line interface (CLI) application that allows you to se
 
 1.  **License Activation:**
     When you first run the tool, it will generate a unique **System Token**.
+    Alternatively, you can run:
+    ```bash
+    python get_token.py
+    ```
     - Send this token to the Administrator to receive your **Activation Key**.
     - Create a file named `license.key` in the root directory.
     - Paste your Activation Key into the file.
