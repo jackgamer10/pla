@@ -1,0 +1,11 @@
+twilio
+vonage
+boto3
+requests
+plivo
+messagebird
+telnyx
+telesign
+pyfiglet
+PySocks
+setuptools<70

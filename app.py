@@ -425,7 +425,7 @@ def print_menu():
     os.system('cls' if os.name == 'nt' else 'clear')
 
     # ASCII Art Title
-    ascii_art_title = pyfiglet.figlet_format("MagxxicVOT", font="slant")
+    ascii_art_title = pyfiglet.figlet_format("MagxxicVOT SMS", font="slant")
     print(f"\033[1;35m{ascii_art_title}\033[0m")
 
     by_line = "Note : I am not responsible for illegal use of the software"

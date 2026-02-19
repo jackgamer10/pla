@@ -1,0 +1,5 @@
+# Add your SOCKS5 proxies here, one per line.
+# Format: host:port OR user:pass@host:port
+# Example:
+127.0.0.1:1080
+user:pass@127.0.0.1:1080
