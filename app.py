@@ -12,6 +12,38 @@ from telesign.messaging import MessagingClient
 import pyfiglet
 import socks
 import socket
+import uuid
+import hashlib
+
+# --- License Management ---
+
+class LicenseManager:
+    def __init__(self):
+        self.key_file = "license.key"
+        self.salt = "MAGXXIC_VOT_SECRET_SALT_2024"
+
+    def get_token(self):
+        # Generate a unique token based on machine info
+        hwid = str(uuid.getnode()) + socket.gethostname()
+        return hashlib.sha256(hwid.encode()).hexdigest()[:16].upper()
+
+    def generate_key(self, token):
+        # Algorithm to generate a valid key from a token
+        return hashlib.sha256((token + self.salt).encode()).hexdigest()[:16].upper()
+
+    def verify(self):
+        token = self.get_token()
+        if not os.path.exists(self.key_file):
+            return False, token
+
+        try:
+            with open(self.key_file, 'r') as f:
+                key = f.read().strip()
+            return key == self.generate_key(token), token
+        except:
+            return False, token
+
+license_manager = LicenseManager()
 
 # --- Proxy Management ---
 
@@ -464,6 +496,24 @@ def print_menu():
 
 def main():
     """Main function to run the CLI application."""
+
+    is_active, token = license_manager.verify()
+    if not is_active:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        ascii_banner = pyfiglet.figlet_format("MagxxicVOT SMS", font="slant")
+        print(f"\033[1;35m{ascii_banner}\033[0m")
+        print("\033[1;31m" + "="*50)
+        print(" LICENSE ACTIVATION REQUIRED")
+        print("="*50 + "\033[0m")
+        print(f"\n[+] Your System Token: \033[1;32m{token}\033[0m")
+        print("\n[!] Instructions:")
+        print("1. Copy the token above.")
+        print("2. Send it to the Administrator to get your Activation Key.")
+        print("3. Create a file named 'license.key' in this folder.")
+        print("4. Paste your Activation Key into 'license.key' and restart the tool.")
+        print("\n" + "="*50)
+        input("\nPress Enter to exit...")
+        return
 
     def send_sms_to_multiple(sms_function):
         """Gets input and sends SMS to multiple numbers."""

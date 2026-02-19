@@ -23,7 +23,13 @@ This project is a command-line interface (CLI) application that allows you to se
 
 ## Setup
 
-1.  **Clone the repository:**
+1.  **License Activation:**
+    When you first run the tool, it will generate a unique **System Token**.
+    - Send this token to the Administrator to receive your **Activation Key**.
+    - Create a file named `license.key` in the root directory.
+    - Paste your Activation Key into the file.
+
+2.  **Clone the repository:**
     ```bash
     git clone https://github.com/your-username/multi-provider-sms-sender.git
     cd multi-provider-sms-sender
