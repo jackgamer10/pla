@@ -102,3 +102,12 @@ If you choose to load from a file, create a `.txt` file (e.g., `numbers.txt`) an
 You will then be prompted to enter the path to this file. After the numbers are loaded, you will be asked for the message you wish to send.
 
 To exit the application, type `exit` or `quit` at the main menu.
+
+## Administrator Tools
+
+### Key Generator
+
+Administrators can use `keygen.py` to generate activation keys for users.
+```bash
+python keygen.py [SYSTEM_TOKEN]
+```
