@@ -18,6 +18,16 @@ MagxxicVOT Advanced Email Sorter is a professional-grade tool designed for high-
 - `email_sorter.py`: The CLI version of the tool.
 - `sorter_utils.py`: Core asynchronous sorting and provider identification logic.
 - `provider_config.py`: Centralized mapping of MX record patterns to provider names.
+- `activation_mgr.py`: Handles HWID generation and token validation.
+- `admin_activation_kit.py`: Tool for administrators to generate tokens.
+
+## Activation
+
+Upon first use, the application will prompt for an activation token.
+1.  Launch the application.
+2.  Copy the displayed **HWID**.
+3.  Provide the HWID to your administrator to receive an **Activation Token**.
+4.  Enter the token to unlock the application.
 
 ## Requirements
 

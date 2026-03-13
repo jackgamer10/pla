@@ -1,8 +1,10 @@
 import asyncio
 import aiodns
 import os
+import sys
 from provider_config import MX_PROVIDER_MAPPING
 from sorter_utils import process_email_base
+from activation_mgr import get_hwid, is_activated, activate
 
 async def process_email(email, resolver, results, lock):
     """Processes a single email and categorizes it."""
@@ -50,6 +52,21 @@ def write_sorted_emails(results, output_dir):
                 f.write(email + '\n')
 
 async def main():
+    if not is_activated():
+        print("=======================================================")
+        print("    MagxxicVOT Advanced Email Sorter - Activation")
+        print("=======================================================")
+        hwid = get_hwid()
+        print(f"\nYour HWID: {hwid}")
+        print("Please provide this HWID to get your activation token.")
+
+        token = input("\nEnter Activation Token: ").strip()
+        if activate(token):
+            print("\n[SUCCESS] Application activated successfully!")
+        else:
+            print("\n[ERROR] Invalid activation token.")
+            sys.exit(1)
+
     email_file = 'emails.txt'
     output_dir = 'sorted_output'
 

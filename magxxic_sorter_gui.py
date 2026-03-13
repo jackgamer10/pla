@@ -7,6 +7,7 @@ import os
 import threading
 from provider_config import MX_PROVIDER_MAPPING
 from sorter_utils import process_email_base
+from activation_mgr import get_hwid, is_activated, activate
 
 class EmailSorterGUI:
     def __init__(self, root):
@@ -14,6 +15,12 @@ class EmailSorterGUI:
         self.root.title("MagxxicVOT - Advanced Email Sorter v1.0")
         self.root.geometry("900x650")
         self.root.configure(bg="#1e1e2e")
+
+        if not is_activated():
+            self.show_activation_dialog()
+            if not is_activated():
+                self.root.destroy()
+                return
 
         self.style = ttk.Style()
         self.style.theme_use("clam")
@@ -192,6 +199,46 @@ class EmailSorterGUI:
             self.tree.set(provider, "Percent", f"{percent:.1f}%")
 
         self.progress_label.config(text=f"CHECKED: {self.total_checked} / {self.total_loaded}")
+
+    def show_activation_dialog(self):
+        activation_win = tk.Toplevel(self.root)
+        activation_win.title("MagxxicVOT Activation")
+        activation_win.geometry("500x300")
+        activation_win.configure(bg="#1e1e2e")
+        activation_win.grab_set()  # Modal
+
+        hwid = get_hwid()
+
+        tk.Label(activation_win, text="Application Not Activated", font=("Arial", 14, "bold"), bg="#1e1e2e", fg="#f38ba8").pack(pady=10)
+
+        tk.Label(activation_win, text="Your HWID:", bg="#1e1e2e", fg="white").pack()
+        hwid_entry = tk.Entry(activation_win, width=40, bg="#313244", fg="white", justify="center")
+        hwid_entry.insert(0, hwid)
+        hwid_entry.config(state="readonly")
+        hwid_entry.pack(pady=5)
+
+        def copy_hwid():
+            self.root.clipboard_clear()
+            self.root.clipboard_append(hwid)
+            messagebox.showinfo("Success", "HWID copied to clipboard!")
+
+        tk.Button(activation_win, text="Copy HWID", command=copy_hwid, bg="#45475a", fg="white").pack()
+
+        tk.Label(activation_win, text="Enter Activation Token:", bg="#1e1e2e", fg="white").pack(pady=(20, 0))
+        token_entry = tk.Entry(activation_win, width=40, bg="#313244", fg="white", justify="center")
+        token_entry.pack(pady=5)
+
+        def attempt_activation():
+            token = token_entry.get().strip()
+            if activate(token):
+                messagebox.showinfo("Success", "Application activated successfully!")
+                activation_win.destroy()
+            else:
+                messagebox.showerror("Error", "Invalid activation token.")
+
+        tk.Button(activation_win, text="ACTIVATE", command=attempt_activation, bg="#a6e3a1", fg="#1e1e2e", font=("Arial", 10, "bold"), width=15).pack(pady=10)
+
+        self.root.wait_window(activation_win)
 
     def finish_sorting(self):
         self.btn_start.config(state="normal")
