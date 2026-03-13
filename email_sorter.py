@@ -1,44 +1,12 @@
 import asyncio
 import aiodns
-import re
 import os
 from provider_config import MX_PROVIDER_MAPPING
-
-async def get_mx_record(domain, resolver):
-    """Asynchronously fetches the MX record for a given domain."""
-    try:
-        result = await resolver.query(domain, 'MX')
-        mx_records = [str(rdata.host).lower() for rdata in result]
-        return mx_records
-    except aiodns.error.DNSError:
-        return None
-    except Exception as e:
-        print(f"DNS Error for {domain}: {e}")
-        return None
-
-def identify_provider(mx_records):
-    """Identifies the email provider based on MX record patterns."""
-    if not mx_records:
-        return 'Others(No_MX)'
-
-    for mx in mx_records:
-        for pattern, provider in MX_PROVIDER_MAPPING.items():
-            if pattern in mx:
-                return provider
-
-    return 'Others(MX)'
+from sorter_utils import process_email_base
 
 async def process_email(email, resolver, results, lock):
     """Processes a single email and categorizes it."""
-    match = re.search(r'@([\w\.-]+)', email)
-    if not match:
-        async with lock:
-            results['Unknown'].append(email)
-        return
-
-    domain = match.group(1).lower()
-    mx_records = await get_mx_record(domain, resolver)
-    provider = identify_provider(mx_records)
+    provider = await process_email_base(email, resolver)
 
     async with lock:
         if provider not in results:

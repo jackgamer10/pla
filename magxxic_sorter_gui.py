@@ -5,8 +5,8 @@ import aiodns
 import re
 import os
 import threading
-import time
 from provider_config import MX_PROVIDER_MAPPING
+from sorter_utils import process_email_base
 
 class EmailSorterGUI:
     def __init__(self, root):
@@ -136,35 +136,19 @@ class EmailSorterGUI:
             self.is_running = False
             self.root.after(0, self.finish_sorting)
 
-    async def get_mx_record(self, domain, resolver):
-        try:
-            result = await resolver.query(domain, 'MX')
-            return [str(rdata.host).lower() for rdata in result]
-        except: return None
-
-    def identify_provider(self, mx_records):
-        if not mx_records: return 'Others(No_MX)'
-        for mx in mx_records:
-            for pattern, provider in MX_PROVIDER_MAPPING.items():
-                if pattern in mx: return provider
-        return 'Others(MX)'
-
     async def process_email(self, email, resolver, output_files, lock):
-        match = re.search(r'@([\w\.-]+)', email)
-        if not match:
-            provider = 'Unknown'
-        else:
-            domain = match.group(1).lower()
-            mx_records = await self.get_mx_record(domain, resolver)
-            provider = self.identify_provider(mx_records)
+        provider = await process_email_base(email, resolver)
 
         async with lock:
             self.stats[provider] += 1
             self.total_checked += 1
 
-            if provider in output_files:
-                output_files[provider].write(email + '\n')
-                output_files[provider].flush()
+            if provider not in output_files:
+                out_dir = self.output_dir.get()
+                output_files[provider] = open(os.path.join(out_dir, f"{provider.lower()}.txt"), 'a')
+
+            output_files[provider].write(email + '\n')
+            output_files[provider].flush()
 
         if self.total_checked % 5 == 0 or self.total_checked == self.total_loaded:
             self.root.after(0, self.update_gui_stats)
@@ -179,9 +163,6 @@ class EmailSorterGUI:
             self.total_loaded = len(lines)
 
         output_files = {}
-        for p in self.stats.keys():
-            output_files[p] = open(os.path.join(out_dir, f"{p.lower()}.txt"), 'w')
-
         resolver = aiodns.DNSResolver()
         lock = asyncio.Lock()
         concurrency = 50

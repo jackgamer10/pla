@@ -3,7 +3,7 @@ MX_PROVIDER_MAPPING = {
     'google.com': 'Gmail',
     'outlook.com': 'Office365',
     'protection.outlook.com': 'Office365',
-    'aol.com': 'Aol', # More specific first
+    'aol.com': 'Aol',
     'yahoodns.net': 'Yahoo',
     'secureserver.net': 'GoDaddy',
     'emailsrvr.com': 'Rackspace',
@@ -34,4 +34,13 @@ MX_PROVIDER_MAPPING = {
     'mweb.co.za': 'Mweb',
     'mycloudmailbox.com': 'MyCloudMailbox',
     'sherwebcloud.com': 'SherwebCloud',
+
+    # Generic Webmail / Hosting Panels
+    'zimbra': 'Zimbra',
+    'roundcube': 'Roundcube',
+    'webmail': 'Webmail',
+    'cpanel': 'Webmail',
+    'plesk': 'Webmail',
+    'directadmin': 'Webmail',
+    'mailhost': 'Webmail',
 }
