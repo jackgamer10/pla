@@ -30,6 +30,10 @@ MagxxicVOT Advanced Email Sorter is a professional-grade tool designed for high-
 
 ### 1. Install Dependencies
 
+**For Windows Users:**
+Simply double-click the `setup.bat` file. This will automatically install the required libraries and launch the GUI.
+
+**Manual Installation (All Platforms):**
 Ensure you have the required libraries installed via pip:
 
 ```bash
