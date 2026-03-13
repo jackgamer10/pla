@@ -8,6 +8,7 @@ import threading
 from provider_config import MX_PROVIDER_MAPPING
 from sorter_utils import process_email_base
 from activation_mgr import get_hwid, is_activated, activate
+from branding import BANNER
 
 class EmailSorterGUI:
     def __init__(self, root):
@@ -42,11 +43,16 @@ class EmailSorterGUI:
         self.create_widgets()
 
     def create_widgets(self):
-        # Header
-        header_frame = tk.Frame(self.root, bg="#1e1e2e", pady=15)
+        # Header with Stylized Text
+        header_frame = tk.Frame(self.root, bg="#1e1e2e", pady=5)
         header_frame.pack(fill="x")
-        title_label = tk.Label(header_frame, text="✦ MagxxicVOT - Advanced Email Sorter ✦", font=("Segoe UI", 16, "bold"), bg="#1e1e2e", fg="#cba6f7")
+
+        # Display the name in a prominent font
+        title_label = tk.Label(header_frame, text="MAGXXICVOT EMAIL SORTER", font=("Segoe UI", 24, "bold"), bg="#1e1e2e", fg="#cba6f7")
         title_label.pack()
+
+        subtitle_label = tk.Label(header_frame, text="✦ High-Accuracy Professional Sorter ✦", font=("Segoe UI", 10, "italic"), bg="#1e1e2e", fg="#bac2de")
+        subtitle_label.pack(pady=(0, 10))
 
         # File Selection
         file_frame = tk.Frame(self.root, bg="#181825", padx=20, pady=15, highlightbackground="#313244", highlightthickness=1)

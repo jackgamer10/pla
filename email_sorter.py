@@ -5,6 +5,7 @@ import sys
 from provider_config import MX_PROVIDER_MAPPING
 from sorter_utils import process_email_base
 from activation_mgr import get_hwid, is_activated, activate
+from branding import print_banner
 
 async def process_email(email, resolver, results, lock):
     """Processes a single email and categorizes it."""
@@ -52,6 +53,7 @@ def write_sorted_emails(results, output_dir):
                 f.write(email + '\n')
 
 async def main():
+    print_banner()
     if not is_activated():
         print("=======================================================")
         print("    MagxxicVOT Advanced Email Sorter - Activation")

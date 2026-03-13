@@ -1,7 +1,9 @@
 import sys
 from activation_mgr import generate_token
+from branding import print_banner
 
 def main():
+    print_banner()
     print("=======================================================")
     print("    MagxxicVOT Advanced Email Sorter - Admin Kit")
     print("=======================================================")
